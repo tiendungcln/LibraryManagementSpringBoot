@@ -1,7 +1,5 @@
 package com.library.librarymanagementspringboot.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,15 +7,10 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class AuthorRequestDTO {
+public class AuthorPatchDTO {
 
-    @NotBlank
     private String name;
-
-    @NotBlank
     private String country;
-
-    @NotNull
     private LocalDate birthDate;
 
 }
