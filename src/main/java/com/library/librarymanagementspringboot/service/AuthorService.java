@@ -3,8 +3,11 @@ package com.library.librarymanagementspringboot.service;
 import com.library.librarymanagementspringboot.dto.AuthorPatchDTO;
 import com.library.librarymanagementspringboot.dto.AuthorRequestDTO;
 import com.library.librarymanagementspringboot.dto.AuthorResponseDTO;
+import com.library.librarymanagementspringboot.dto.BookResponseDTO;
 import com.library.librarymanagementspringboot.entity.Author;
+import com.library.librarymanagementspringboot.entity.Book;
 import com.library.librarymanagementspringboot.repository.AuthorRepository;
+import com.library.librarymanagementspringboot.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +16,11 @@ import java.util.List;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final BookRepository bookRepository;
 
-    public AuthorService(AuthorRepository authorRepository){
+    public AuthorService(AuthorRepository authorRepository, BookRepository bookRepository){
         this.authorRepository = authorRepository;
+        this.bookRepository = bookRepository;
     }
 
     private AuthorResponseDTO toResponse(Author author){
@@ -25,6 +30,22 @@ public class AuthorService {
         response.setName(author.getName());
         response.setCountry(author.getCountry());
         response.setBirthDate(author.getBirthDate());
+
+        return response;
+    }
+
+    private BookResponseDTO toResponseBook(Book book){
+        BookResponseDTO response = new BookResponseDTO();
+
+        response.setBookId(book.getBookId());
+        response.setTitle(book.getTitle());
+        response.setAuthorId(book.getAuthor().getAuthorId());
+        response.setAuthorName(book.getAuthor().getName());
+        response.setPublisher(book.getPublisher());
+        response.setPublishDate(book.getPublishDate());
+        response.setPrice(book.getPrice());
+        response.setIsbn(book.getIsbn());
+        response.setQuantity(book.getQuantity());
 
         return response;
     }
@@ -90,6 +111,19 @@ public class AuthorService {
 
         authorRepository.deleteById(id);
         return true;
+    }
+
+    public List<BookResponseDTO> getBooksByAuthorId(Long authorId){
+        Author author = authorRepository.findById(authorId).orElse(null);
+
+        if (author == null){
+            return null;
+        }
+
+        return bookRepository.findByAuthorAuthorId(authorId)
+                .stream()
+                .map(this::toResponseBook)
+                .toList();
     }
 
 }

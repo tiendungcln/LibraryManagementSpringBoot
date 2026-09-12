@@ -3,6 +3,7 @@ package com.library.librarymanagementspringboot.controller;
 import com.library.librarymanagementspringboot.dto.AuthorPatchDTO;
 import com.library.librarymanagementspringboot.dto.AuthorRequestDTO;
 import com.library.librarymanagementspringboot.dto.AuthorResponseDTO;
+import com.library.librarymanagementspringboot.dto.BookResponseDTO;
 import com.library.librarymanagementspringboot.service.AuthorService;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,11 @@ public class AuthorController {
     @DeleteMapping("/{id}")
     public boolean deleteAuthor(@PathVariable Long id){
         return authorService.deleteAuthor(id);
+    }
+
+    @GetMapping("/{authorId}/books")
+    public List<BookResponseDTO> getBooksByAuthorId(@PathVariable Long authorId){
+        return authorService.getBooksByAuthorId(authorId);
     }
 
 }
