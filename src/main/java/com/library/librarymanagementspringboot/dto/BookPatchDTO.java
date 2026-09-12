@@ -8,12 +8,10 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class BookResponseDTO {
+public class BookPatchDTO {
 
-    private Long bookId;
     private String title;
     private Long authorId;
-    private String authorName;
     private String publisher;
     private LocalDate publishDate;
     private BigDecimal price;
