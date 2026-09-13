@@ -8,6 +8,7 @@ import java.util.List;
 public interface BorrowRepository extends JpaRepository<Borrow, Long> {
     List<Borrow> findByMemberMemberId(Long memberId); // Borrow.member.memberId = memberId
     List<Borrow> findByMemberPhone(String phone); // Borrow.member.phone = phone
+    List<Borrow> findByBookBookId(Long bookId);
 }
 
 // ContainingIgnoreCase: Tìm chuỗi có chứa từ khóa, không phân biệt chữ hoa/chữ thường

@@ -3,10 +3,13 @@ package com.library.librarymanagementspringboot.service;
 import com.library.librarymanagementspringboot.dto.BookPatchDTO;
 import com.library.librarymanagementspringboot.dto.BookRequestDTO;
 import com.library.librarymanagementspringboot.dto.BookResponseDTO;
+import com.library.librarymanagementspringboot.dto.BorrowResponseDTO;
 import com.library.librarymanagementspringboot.entity.Author;
 import com.library.librarymanagementspringboot.entity.Book;
+import com.library.librarymanagementspringboot.entity.Borrow;
 import com.library.librarymanagementspringboot.repository.AuthorRepository;
 import com.library.librarymanagementspringboot.repository.BookRepository;
+import com.library.librarymanagementspringboot.repository.BorrowRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +19,12 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
+    private final BorrowRepository borrowRepository;
 
-    public BookService(BookRepository bookRepository, AuthorRepository authorRepository){
+    public BookService(BookRepository bookRepository, AuthorRepository authorRepository, BorrowRepository borrowRepository){
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
+        this.borrowRepository = borrowRepository;
     }
 
 
@@ -35,6 +40,18 @@ public class BookService {
         response.setPrice(book.getPrice());
         response.setIsbn(book.getIsbn());
         response.setQuantity(book.getQuantity());
+
+        return response;
+    }
+
+    private BorrowResponseDTO toResponseBorrow(Borrow borrow){
+        BorrowResponseDTO response = new BorrowResponseDTO();
+
+        response.setBorrowId(borrow.getBorrowId());
+        response.setMemberId(borrow.getMember().getMemberId());
+        response.setBookId(borrow.getBook().getBookId());
+        response.setBorrowedAt(borrow.getBorrowedAt());
+        response.setReturnedAt(borrow.getReturnedAt());
 
         return response;
     }
@@ -164,6 +181,20 @@ public class BookService {
         return bookRepository.findByQuantity(0)
                 .stream()
                 .map(this::toResponse)
+                .toList();
+    }
+
+    // lịch sử mượn của 1 cuốn sách
+    public List<BorrowResponseDTO> searchBorrowsByBook(Long bookId){
+        Book book = bookRepository.findById(bookId).orElse(null);
+
+        if (book == null){
+            return null;
+        }
+
+        return borrowRepository.findByBookBookId(bookId)
+                .stream()
+                .map(this::toResponseBorrow)
                 .toList();
     }
 

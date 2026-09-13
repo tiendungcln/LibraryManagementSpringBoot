@@ -3,6 +3,7 @@ package com.library.librarymanagementspringboot.controller;
 import com.library.librarymanagementspringboot.dto.BookPatchDTO;
 import com.library.librarymanagementspringboot.dto.BookRequestDTO;
 import com.library.librarymanagementspringboot.dto.BookResponseDTO;
+import com.library.librarymanagementspringboot.dto.BorrowResponseDTO;
 import com.library.librarymanagementspringboot.service.BookService;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,6 +62,11 @@ public class BookController {
     @GetMapping("/unavailable")
     public List<BookResponseDTO> getUnavailableBooks(){
         return bookService.getUnavailableBooks();
+    }
+
+    @GetMapping("/{bookId}/borrows")
+    public List<BorrowResponseDTO> searchBorrowsByBook(@PathVariable Long bookId){
+        return bookService.searchBorrowsByBook(bookId);
     }
 
 }
