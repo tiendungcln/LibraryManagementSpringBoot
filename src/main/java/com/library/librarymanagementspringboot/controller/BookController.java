@@ -43,4 +43,24 @@ public class BookController {
         return bookService.deleteBook(id);
     }
 
+    @GetMapping("/search") // http://localhost:8080/books/search?title=...
+    public List<BookResponseDTO> searchBooksByTitle(@RequestParam String title){
+        return bookService.searchBooksByTitle(title);
+    }
+
+    @GetMapping("/isbn/{isbn}")
+    public BookResponseDTO searchBookByIsbn(@PathVariable String isbn){
+        return bookService.searchBookByIsbn(isbn);
+    }
+
+    @GetMapping("/available")
+    public List<BookResponseDTO> getAvailableBooks(){
+        return bookService.getAvailableBooks();
+    }
+
+    @GetMapping("/unavailable")
+    public List<BookResponseDTO> getUnavailableBooks(){
+        return bookService.getUnavailableBooks();
+    }
+
 }

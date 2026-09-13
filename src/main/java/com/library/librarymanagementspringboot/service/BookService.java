@@ -136,4 +136,35 @@ public class BookService {
         return true;
     }
 
+    public List<BookResponseDTO> searchBooksByTitle(String title){
+        return bookRepository.findByTitleContainingIgnoreCase(title)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public BookResponseDTO searchBookByIsbn(String isbn){
+        Book book = bookRepository.findByIsbn(isbn);
+
+        if (book == null){
+            return null;
+        }
+
+        return toResponse(book);
+    }
+
+    public List<BookResponseDTO> getAvailableBooks(){
+        return bookRepository.findByQuantityGreaterThan(0)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public List<BookResponseDTO> getUnavailableBooks(){
+        return bookRepository.findByQuantity(0)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
 }
