@@ -5,6 +5,8 @@ import com.library.librarymanagementspringboot.dto.BookRequestDTO;
 import com.library.librarymanagementspringboot.dto.BookResponseDTO;
 import com.library.librarymanagementspringboot.dto.BorrowResponseDTO;
 import com.library.librarymanagementspringboot.service.BookService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +22,8 @@ public class BookController {
     }
 
     @GetMapping
-    public List<BookResponseDTO> getAllBooks(){
-        return bookService.getAllBooks();
+    public Page<BookResponseDTO> getAllBooks(Pageable pageable){
+        return bookService.getAllBooks(pageable);
     }
 
     @GetMapping("/{id}")

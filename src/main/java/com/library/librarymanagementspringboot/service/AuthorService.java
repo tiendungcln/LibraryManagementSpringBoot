@@ -8,6 +8,9 @@ import com.library.librarymanagementspringboot.entity.Author;
 import com.library.librarymanagementspringboot.entity.Book;
 import com.library.librarymanagementspringboot.repository.AuthorRepository;
 import com.library.librarymanagementspringboot.repository.BookRepository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,11 +53,9 @@ public class AuthorService {
         return response;
     }
 
-    public List<AuthorResponseDTO> getAllAuthors(){
-        return authorRepository.findAll() // Lấy tất cả Author từ database
-                .stream() // Duyệt từng Author
-                .map(this::toResponse) // Chuyển từng Author thành AuthorResponseDTO
-                .toList(); // Gom các DTO thành một List
+    public Page<AuthorResponseDTO> getAllAuthors(Pageable pageable){
+        return authorRepository.findAll(pageable)
+                .map(this::toResponse); // Page đã hỗ trợ nên không cần stream() hay toList()
     }
 
     public AuthorResponseDTO getAuthorById(Long id){

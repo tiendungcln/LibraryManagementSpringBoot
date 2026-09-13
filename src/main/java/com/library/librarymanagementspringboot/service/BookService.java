@@ -10,6 +10,8 @@ import com.library.librarymanagementspringboot.entity.Borrow;
 import com.library.librarymanagementspringboot.repository.AuthorRepository;
 import com.library.librarymanagementspringboot.repository.BookRepository;
 import com.library.librarymanagementspringboot.repository.BorrowRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,11 +58,9 @@ public class BookService {
         return response;
     }
 
-    public List<BookResponseDTO> getAllBooks(){
-        return bookRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public Page<BookResponseDTO> getAllBooks(Pageable pageable){
+        return bookRepository.findAll(pageable)
+                .map(this::toResponse);
     }
 
     public BookResponseDTO getBookById(Long id){
@@ -184,7 +184,6 @@ public class BookService {
                 .toList();
     }
 
-    // lịch sử mượn của 1 cuốn sách
     public List<BorrowResponseDTO> searchBorrowsByBook(Long bookId){
         Book book = bookRepository.findById(bookId).orElse(null);
 

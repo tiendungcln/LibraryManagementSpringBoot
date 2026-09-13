@@ -4,6 +4,8 @@ import com.library.librarymanagementspringboot.dto.BorrowPatchDTO;
 import com.library.librarymanagementspringboot.dto.BorrowRequestDTO;
 import com.library.librarymanagementspringboot.dto.BorrowResponseDTO;
 import com.library.librarymanagementspringboot.service.BorrowService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +21,8 @@ public class BorrowController {
     }
 
     @GetMapping
-    public List<BorrowResponseDTO> getAllBorrows(){
-        return borrowService.getAllBorrows();
+    public Page<BorrowResponseDTO> getAllBorrows(Pageable pageable){
+        return borrowService.getAllBorrows(pageable);
     }
 
     @GetMapping("/{id}")

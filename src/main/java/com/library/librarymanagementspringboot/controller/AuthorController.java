@@ -5,6 +5,8 @@ import com.library.librarymanagementspringboot.dto.AuthorRequestDTO;
 import com.library.librarymanagementspringboot.dto.AuthorResponseDTO;
 import com.library.librarymanagementspringboot.dto.BookResponseDTO;
 import com.library.librarymanagementspringboot.service.AuthorService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +22,8 @@ public class AuthorController {
     }
 
     @GetMapping
-    public List<AuthorResponseDTO> getAllAuthors(){
-        return authorService.getAllAuthors();
+    public Page<AuthorResponseDTO> getAllAuthors(Pageable pageable){
+        return authorService.getAllAuthors(pageable);
     }
 
     @GetMapping("/{id}")

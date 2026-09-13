@@ -8,6 +8,8 @@ import com.library.librarymanagementspringboot.entity.Borrow;
 import com.library.librarymanagementspringboot.entity.Member;
 import com.library.librarymanagementspringboot.repository.BorrowRepository;
 import com.library.librarymanagementspringboot.repository.MemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,11 +49,10 @@ public class MemberService {
         return response;
     }
 
-    public List<MemberResponseDTO> getAllMembers(){
-        return memberRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public Page<MemberResponseDTO> getAllMembers(Pageable pageable){
+        return memberRepository.findAll(pageable)
+                .map(this::toResponse);
+
     }
 
     public MemberResponseDTO getMemberById(Long id){

@@ -7,6 +7,8 @@ import com.library.librarymanagementspringboot.entity.Member;
 import com.library.librarymanagementspringboot.repository.BookRepository;
 import com.library.librarymanagementspringboot.repository.BorrowRepository;
 import com.library.librarymanagementspringboot.repository.MemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -37,11 +39,9 @@ public class BorrowService {
         return response;
     }
 
-    public List<BorrowResponseDTO> getAllBorrows(){
-        return borrowRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public Page<BorrowResponseDTO> getAllBorrows(Pageable pageable){
+        return borrowRepository.findAll(pageable)
+                .map(this::toResponse);
     }
 
     public BorrowResponseDTO getBorrowById(Long id){

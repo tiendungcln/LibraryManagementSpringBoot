@@ -5,6 +5,8 @@ import com.library.librarymanagementspringboot.dto.MemberPatchDTO;
 import com.library.librarymanagementspringboot.dto.MemberRequestDTO;
 import com.library.librarymanagementspringboot.dto.MemberResponseDTO;
 import com.library.librarymanagementspringboot.service.MemberService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +22,8 @@ public class MemberController {
     }
 
     @GetMapping
-    public List<MemberResponseDTO> getAllMembers(){
-        return memberService.getAllMembers();
+    public Page<MemberResponseDTO> getAllMembers(Pageable pageable){
+        return memberService.getAllMembers(pageable);
     }
 
     @GetMapping("/{id}")
