@@ -144,7 +144,7 @@ public class BookService {
     }
 
     public BookResponseDTO searchBookByIsbn(String isbn){
-        Book book = bookRepository.findByIsbn(isbn);
+        Book book = bookRepository.findByIsbn(isbn).orElse(null);
 
         if (book == null){
             return null;

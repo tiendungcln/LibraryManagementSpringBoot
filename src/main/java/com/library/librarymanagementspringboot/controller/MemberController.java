@@ -1,5 +1,6 @@
 package com.library.librarymanagementspringboot.controller;
 
+import com.library.librarymanagementspringboot.dto.BorrowResponseDTO;
 import com.library.librarymanagementspringboot.dto.MemberPatchDTO;
 import com.library.librarymanagementspringboot.dto.MemberRequestDTO;
 import com.library.librarymanagementspringboot.dto.MemberResponseDTO;
@@ -41,6 +42,26 @@ public class MemberController {
     @DeleteMapping("/{id}")
     public boolean deleteMember(@PathVariable Long id){
         return memberService.deleteMember(id);
+    }
+
+    @GetMapping("/search") // http://localhost:8080/members/search?name=...
+    public List<MemberResponseDTO> searchMemberByName(@RequestParam String name){
+        return memberService.searchMemberByName(name);
+    }
+
+    @GetMapping("/phone/{phone}")
+    public MemberResponseDTO searchMemberByPhone(@PathVariable String phone){
+        return memberService.searchMemberByPhone(phone);
+    }
+
+    @GetMapping("/{memberId}/borrows")
+    public List<BorrowResponseDTO> searchBorrowsByMemberId(@PathVariable Long memberId){
+        return memberService.searchBorrowsByMemberId(memberId);
+    }
+
+    @GetMapping("/phone/{phone}/borrows")
+    public List<BorrowResponseDTO> searchBorrowsByPhone(@PathVariable String phone){
+        return memberService.searchBorrowsByPhone(phone);
     }
 
 }

@@ -1,9 +1,12 @@
 package com.library.librarymanagementspringboot.service;
 
+import com.library.librarymanagementspringboot.dto.BorrowResponseDTO;
 import com.library.librarymanagementspringboot.dto.MemberPatchDTO;
 import com.library.librarymanagementspringboot.dto.MemberRequestDTO;
 import com.library.librarymanagementspringboot.dto.MemberResponseDTO;
+import com.library.librarymanagementspringboot.entity.Borrow;
 import com.library.librarymanagementspringboot.entity.Member;
+import com.library.librarymanagementspringboot.repository.BorrowRepository;
 import com.library.librarymanagementspringboot.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +16,11 @@ import java.util.List;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final BorrowRepository borrowRepository;
 
-    public MemberService(MemberRepository memberRepository){
+    public MemberService(MemberRepository memberRepository, BorrowRepository borrowRepository) {
         this.memberRepository = memberRepository;
+        this.borrowRepository = borrowRepository;
     }
 
     private MemberResponseDTO toResponse(Member member){
@@ -26,6 +31,18 @@ public class MemberService {
         response.setPhone(member.getPhone());
         response.setAddress(member.getAddress());
         response.setRegisteredDate(member.getRegisteredDate());
+
+        return response;
+    }
+
+    private BorrowResponseDTO toResponseBorrow(Borrow borrow){
+        BorrowResponseDTO response = new BorrowResponseDTO();
+
+        response.setBorrowId(borrow.getBorrowId());
+        response.setMemberId(borrow.getMember().getMemberId());
+        response.setBookId(borrow.getBook().getBookId());
+        response.setBorrowedAt(borrow.getBorrowedAt());
+        response.setReturnedAt(borrow.getReturnedAt());
 
         return response;
     }
@@ -90,6 +107,49 @@ public class MemberService {
 
         memberRepository.deleteById(id);
         return true;
+    }
+
+    public List<MemberResponseDTO> searchMemberByName(String name){
+        return memberRepository.findByNameContainingIgnoreCase(name)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public MemberResponseDTO searchMemberByPhone(String phone){
+        Member member = memberRepository.findByPhone(phone).orElse(null);
+
+        if (member == null){
+            return null;
+        }
+
+        return toResponse(member);
+    }
+
+    public List<BorrowResponseDTO> searchBorrowsByMemberId(Long memberId){
+        Member member = memberRepository.findById(memberId).orElse(null);
+
+        if (member == null) {
+            return null;
+        }
+
+        return borrowRepository.findByMemberMemberId(memberId)
+                .stream()
+                .map(this::toResponseBorrow)
+                .toList();
+    }
+
+    public List<BorrowResponseDTO> searchBorrowsByPhone(String phone){
+        Member member = memberRepository.findByPhone(phone).orElse(null);
+
+        if (member == null) {
+            return null;
+        }
+
+        return borrowRepository.findByMemberPhone(phone)
+                .stream()
+                .map(this::toResponseBorrow)
+                .toList();
     }
 
 }
