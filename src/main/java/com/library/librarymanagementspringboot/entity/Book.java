@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity // JPA (Java Persistence API): đây là Entity
 @Table(name = "books") // JPA: tên bảng
@@ -51,27 +52,9 @@ public class Book {
     @Column(nullable = false)
     private Integer quantity;
 
+    @OneToMany(mappedBy = "book")
+    private List<Borrow> borrows;
+
     public Book(){}
-
-    public Book(Long bookId, String title, Author author, String publisher, LocalDate publishDate, BigDecimal price, String isbn, Integer quantity) {
-        this.bookId = bookId;
-        this.title = title;
-        this.author = author;
-        this.publisher = publisher;
-        this.publishDate = publishDate;
-        this.price = price;
-        this.isbn = isbn;
-        this.quantity = quantity;
-    }
-
-    public Book(String title, Author author, String publisher, LocalDate publishDate, BigDecimal price, String isbn, Integer quantity) {
-        this.title = title;
-        this.author = author;
-        this.publisher = publisher;
-        this.publishDate = publishDate;
-        this.price = price;
-        this.isbn = isbn;
-        this.quantity = quantity;
-    }
 
 }

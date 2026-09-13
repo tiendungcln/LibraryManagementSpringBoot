@@ -10,31 +10,40 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "authors")
+@Table(name = "members")
 @Getter
 @Setter
-public class Author {
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "author_id")
-    private Long authorId;
+    @Column(name = "member_id")
+    private Long memberId;
 
     @NotBlank
     @Column(nullable = false)
     private String name;
 
     @NotBlank
+    @Column(nullable = false, unique = true)
+    private String phone;
+
+    @NotBlank
     @Column(nullable = false)
-    private String country;
+    private String address;
 
     @NotNull
-    @Column(name = "birth_date", nullable = false)
-    private LocalDate birthDate;
+    @Column(name = "registered_date", nullable = false)
+    private LocalDate registeredDate;
 
-    @OneToMany(mappedBy = "author") // mappedBy = bên còn lại nói “tôi không quản lý khóa ngoại, quan hệ này do field bên kia quản lý (quan hệ được quản lý bởi field Book.author)”
-    private List<Book> books;
+    @OneToMany(mappedBy = "member")
+    private List<Borrow> borrows;
 
-    public Author(){}
+    @PrePersist
+    public void prePersist() {
+        registeredDate = LocalDate.now();
+    }
+
+    public Member(){}
 
 }
