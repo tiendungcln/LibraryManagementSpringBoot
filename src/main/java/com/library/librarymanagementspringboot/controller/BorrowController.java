@@ -32,7 +32,7 @@ public class BorrowController {
 
     @PostMapping
     public BorrowResponseDTO createBorrow(@RequestBody BorrowRequestDTO request){
-        return borrowService.createBorrow(request);
+        return borrowService.borrowBook(request);
     }
 
     @PatchMapping("/{id}")

@@ -10,6 +10,7 @@ import com.library.librarymanagementspringboot.repository.MemberRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,7 +55,8 @@ public class BorrowService {
         return toResponse(borrow);
     }
 
-    public BorrowResponseDTO createBorrow(BorrowRequestDTO request){
+    @Transactional
+    public BorrowResponseDTO borrowBook(BorrowRequestDTO request){
         Borrow borrow = new Borrow();
 
         Member member = memberRepository.findById(request.getMemberId()).orElse(null);
@@ -71,9 +73,15 @@ public class BorrowService {
             return null;
         }
 
-        borrow.setBook(book);
+        if (book.getQuantity() <= 0){
+            return null;
+        }
 
+        borrow.setBook(book);
         borrow.setBorrowedAt(LocalDateTime.now());
+
+        book.setQuantity(book.getQuantity() - 1);
+        bookRepository.save(book);
 
         Borrow savedBorrow = borrowRepository.save(borrow);
 
@@ -129,6 +137,7 @@ public class BorrowService {
         return true;
     }
 
+    @Transactional
     public BorrowResponseDTO returnBook(Long id){
         Borrow borrow = borrowRepository.findById(id).orElse(null);
 
@@ -136,11 +145,16 @@ public class BorrowService {
             return null;
         }
 
+        // Không cho trả lần 2
         if (borrow.getReturnedAt() != null){
             return null;
         }
 
         borrow.setReturnedAt(LocalDateTime.now());
+
+        Book book = borrow.getBook();
+        book.setQuantity(book.getQuantity() + 1);
+        bookRepository.save(book);
 
         Borrow savedBorrow = borrowRepository.save(borrow);
 
