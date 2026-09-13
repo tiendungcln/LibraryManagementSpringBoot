@@ -136,6 +136,10 @@ public class BorrowService {
             return null;
         }
 
+        if (borrow.getReturnedAt() != null){
+            return null;
+        }
+
         borrow.setReturnedAt(LocalDateTime.now());
 
         Borrow savedBorrow = borrowRepository.save(borrow);
