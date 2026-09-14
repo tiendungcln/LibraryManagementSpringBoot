@@ -1,14 +1,12 @@
 package com.library.librarymanagementspringboot.controller;
 
-import com.library.librarymanagementspringboot.dto.BorrowPatchDTO;
 import com.library.librarymanagementspringboot.dto.BorrowRequestDTO;
 import com.library.librarymanagementspringboot.dto.BorrowResponseDTO;
 import com.library.librarymanagementspringboot.service.BorrowService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/borrows")
@@ -31,13 +29,8 @@ public class BorrowController {
     }
 
     @PostMapping
-    public BorrowResponseDTO createBorrow(@RequestBody BorrowRequestDTO request){
+    public BorrowResponseDTO createBorrow(@Valid @RequestBody BorrowRequestDTO request){
         return borrowService.borrowBook(request);
-    }
-
-    @PatchMapping("/{id}")
-    public BorrowResponseDTO updateBorrow(@PathVariable Long id, @RequestBody BorrowPatchDTO request){
-        return borrowService.updateBorrow(id, request);
     }
 
     @DeleteMapping("/{id}")

@@ -88,55 +88,6 @@ public class BorrowService {
         return toResponse(savedBorrow);
     }
 
-    public BorrowResponseDTO updateBorrow(Long id, BorrowPatchDTO request){
-        Borrow borrow = borrowRepository.findById(id).orElse(null);
-
-        if (borrow == null){
-            return null;
-        }
-
-        if (request.getMemberId() != null) {
-            Member member = memberRepository.findById(request.getMemberId()).orElse(null);
-
-            if (member == null) {
-                return null;
-            }
-
-            borrow.setMember(member);
-        }
-
-        if (request.getBookId() != null) {
-            Book book = bookRepository.findById(request.getBookId()).orElse(null);
-
-            if (book == null) {
-                return null;
-            }
-
-            borrow.setBook(book);
-        }
-
-        if (request.getBorrowedAt() != null) {
-            borrow.setBorrowedAt(request.getBorrowedAt());
-        }
-
-        if (request.getReturnedAt() != null) {
-            borrow.setReturnedAt(request.getReturnedAt());
-        }
-
-        Borrow savedBorrow = borrowRepository.save(borrow);
-
-        return toResponse(savedBorrow);
-    }
-
-    public boolean deleteBorrow(Long id){
-        if (!bookRepository.existsById(id)){
-            return false;
-        }
-
-        bookRepository.deleteById(id);
-        return true;
-    }
-
     @Transactional
     public BorrowResponseDTO returnBook(Long id){
         Borrow borrow = borrowRepository.findById(id).orElse(null);
@@ -145,7 +96,7 @@ public class BorrowService {
             return null;
         }
 
-        // Không cho trả lần 2
+        // K cho trả lần 2
         if (borrow.getReturnedAt() != null){
             return null;
         }
@@ -159,6 +110,15 @@ public class BorrowService {
         Borrow savedBorrow = borrowRepository.save(borrow);
 
         return toResponse(savedBorrow);
+    }
+
+    public boolean deleteBorrow(Long id){
+        if (!bookRepository.existsById(id)){
+            return false;
+        }
+
+        bookRepository.deleteById(id);
+        return true;
     }
 
 }

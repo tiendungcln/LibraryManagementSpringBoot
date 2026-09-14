@@ -106,6 +106,10 @@ public class BookService {
         }
 
         if (request.getTitle() != null){
+            if (request.getTitle().isBlank()){
+                return null;
+            }
+
             book.setTitle(request.getTitle());
         }
 
@@ -120,6 +124,10 @@ public class BookService {
         }
 
         if (request.getPublisher() != null){
+            if (request.getPublisher().isBlank()){
+                return null;
+            }
+
             book.setPublisher(request.getPublisher());
         }
 
@@ -132,6 +140,10 @@ public class BookService {
         }
 
         if (request.getIsbn() != null){
+            if (request.getIsbn().isBlank()){
+                return null;
+            }
+
             book.setIsbn(request.getIsbn());
         }
 

@@ -5,6 +5,7 @@ import com.library.librarymanagementspringboot.dto.BookRequestDTO;
 import com.library.librarymanagementspringboot.dto.BookResponseDTO;
 import com.library.librarymanagementspringboot.dto.BorrowResponseDTO;
 import com.library.librarymanagementspringboot.service.BookService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -32,12 +33,12 @@ public class BookController {
     }
 
     @PostMapping
-    public BookResponseDTO createBook(@RequestBody BookRequestDTO request){
+    public BookResponseDTO createBook(@Valid @RequestBody BookRequestDTO request){
         return bookService.createBook(request);
     }
 
     @PatchMapping("/{id}")
-    public BookResponseDTO updateBook(@PathVariable Long id, @RequestBody BookPatchDTO request){
+    public BookResponseDTO updateBook(@PathVariable Long id, @Valid @RequestBody BookPatchDTO request){
         return bookService.updateBook(id, request);
     }
 

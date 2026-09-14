@@ -5,6 +5,7 @@ import com.library.librarymanagementspringboot.dto.MemberPatchDTO;
 import com.library.librarymanagementspringboot.dto.MemberRequestDTO;
 import com.library.librarymanagementspringboot.dto.MemberResponseDTO;
 import com.library.librarymanagementspringboot.service.MemberService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -32,12 +33,12 @@ public class MemberController {
     }
 
     @PostMapping
-    public MemberResponseDTO createMember(@RequestBody MemberRequestDTO request){
+    public MemberResponseDTO createMember(@Valid @RequestBody MemberRequestDTO request){
         return memberService.createMember(request);
     }
 
     @PatchMapping("/{id}")
-    public MemberResponseDTO updateMember(@PathVariable Long id,@RequestBody MemberPatchDTO request){
+    public MemberResponseDTO updateMember(@PathVariable Long id, @Valid @RequestBody MemberPatchDTO request){
         return memberService.updateMember(id, request);
     }
 

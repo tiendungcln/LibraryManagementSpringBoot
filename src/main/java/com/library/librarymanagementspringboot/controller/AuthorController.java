@@ -5,6 +5,7 @@ import com.library.librarymanagementspringboot.dto.AuthorRequestDTO;
 import com.library.librarymanagementspringboot.dto.AuthorResponseDTO;
 import com.library.librarymanagementspringboot.dto.BookResponseDTO;
 import com.library.librarymanagementspringboot.service.AuthorService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -32,12 +33,12 @@ public class AuthorController {
     }
 
     @PostMapping
-    public AuthorResponseDTO createAuthor(@RequestBody AuthorRequestDTO request){
+    public AuthorResponseDTO createAuthor(@Valid @RequestBody AuthorRequestDTO request){
         return authorService.createAuthor(request);
     }
 
     @PatchMapping("/{id}")
-    public AuthorResponseDTO updateAuthor(@PathVariable Long id, @RequestBody AuthorPatchDTO request){
+    public AuthorResponseDTO updateAuthor(@PathVariable Long id, @Valid @RequestBody AuthorPatchDTO request){
         return authorService.updateAuthor(id, request);
     }
 

@@ -85,14 +85,26 @@ public class MemberService {
         }
 
         if (request.getName() != null){
+            if (request.getName().isBlank()){
+                return null;
+            }
+
             member.setName(request.getName());
         }
 
         if (request.getPhone() != null){
+            if (request.getPhone().isBlank()){
+                return null;
+            }
+
             member.setPhone(request.getPhone());
         }
 
         if (request.getAddress() != null){
+            if (request.getAddress().isBlank()){
+                return null;
+            }
+
             member.setAddress(request.getAddress());
         }
 

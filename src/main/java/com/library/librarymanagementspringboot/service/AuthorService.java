@@ -88,10 +88,18 @@ public class AuthorService {
         }
 
         if (request.getName() != null){
+            if (request.getName().isBlank()){
+                return null;
+            }
+
             author.setName(request.getName());
         }
 
         if (request.getCountry() != null){
+            if (request.getCountry().isBlank()){
+                return null;
+            }
+
             author.setCountry(request.getCountry());
         }
 

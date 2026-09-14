@@ -3,6 +3,7 @@ package com.library.librarymanagementspringboot.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,12 +15,14 @@ import java.time.LocalDate;
 public class BookRequestDTO {
 
     @NotBlank
+    @Size(max = 255)
     private String title;
 
     @NotNull
     private Long authorId;
 
     @NotBlank
+    @Size(max = 100)
     private String publisher;
 
     @NotNull
@@ -30,6 +33,7 @@ public class BookRequestDTO {
     private BigDecimal price;
 
     @NotBlank
+    @Size(max = 100)
     private String isbn;
 
     @NotNull
