@@ -4,6 +4,8 @@ import com.library.librarymanagementspringboot.dto.*;
 import com.library.librarymanagementspringboot.entity.Book;
 import com.library.librarymanagementspringboot.entity.Borrow;
 import com.library.librarymanagementspringboot.entity.Member;
+import com.library.librarymanagementspringboot.exception.BookUnavailableException;
+import com.library.librarymanagementspringboot.exception.ResourceNotFoundException;
 import com.library.librarymanagementspringboot.repository.BookRepository;
 import com.library.librarymanagementspringboot.repository.BorrowRepository;
 import com.library.librarymanagementspringboot.repository.MemberRepository;
@@ -46,11 +48,12 @@ public class BorrowService {
     }
 
     public BorrowResponseDTO getBorrowById(Long id){
-        Borrow borrow = borrowRepository.findById(id).orElse(null);
-
-        if (borrow == null){
-            return null;
-        }
+        Borrow borrow = borrowRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Borrow not found with id: " + id
+                        )
+                );
 
         return toResponse(borrow);
     }
@@ -59,22 +62,26 @@ public class BorrowService {
     public BorrowResponseDTO borrowBook(BorrowRequestDTO request){
         Borrow borrow = new Borrow();
 
-        Member member = memberRepository.findById(request.getMemberId()).orElse(null);
-
-        if (member == null){
-            return null;
-        }
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Member not found with id: " + request.getMemberId()
+                        )
+                );
 
         borrow.setMember(member);
 
-        Book book = bookRepository.findById(request.getBookId()).orElse(null);
-
-        if (book == null){
-            return null;
-        }
+        Book book = bookRepository.findById(request.getBookId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Book not found with id: " + request.getBookId()
+                        )
+                );
 
         if (book.getQuantity() <= 0){
-            return null;
+            throw new BookUnavailableException(
+                    "Book is currently unavailable"
+            );
         }
 
         borrow.setBook(book);
@@ -90,15 +97,18 @@ public class BorrowService {
 
     @Transactional
     public BorrowResponseDTO returnBook(Long id){
-        Borrow borrow = borrowRepository.findById(id).orElse(null);
-
-        if (borrow == null){
-            return null;
-        }
+        Borrow borrow = borrowRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Borrow not found with id: " + id
+                        )
+                );
 
         // K cho trả lần 2
         if (borrow.getReturnedAt() != null){
-            return null;
+            throw new IllegalStateException(
+                    "Book has already been returned"
+            );
         }
 
         borrow.setReturnedAt(LocalDateTime.now());
@@ -112,13 +122,14 @@ public class BorrowService {
         return toResponse(savedBorrow);
     }
 
-    public boolean deleteBorrow(Long id){
+    public void deleteBorrow(Long id){
         if (!bookRepository.existsById(id)){
-            return false;
+            throw new ResourceNotFoundException(
+                    "Borrow not found with id: " + id
+            );
         }
 
         bookRepository.deleteById(id);
-        return true;
     }
 
 }

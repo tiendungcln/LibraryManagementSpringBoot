@@ -8,6 +8,8 @@ import com.library.librarymanagementspringboot.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,54 +24,77 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping
-    public Page<BookResponseDTO> getAllBooks(Pageable pageable){
-        return bookService.getAllBooks(pageable);
+    @GetMapping // 200 OK
+    public ResponseEntity<Page<BookResponseDTO>> getAllBooks(Pageable pageable){
+        return ResponseEntity.ok(
+                bookService.getAllBooks(pageable)
+        );
     }
 
-    @GetMapping("/{id}")
-    public BookResponseDTO getBookById(@PathVariable Long id){
-        return bookService.getBookById(id);
+    @GetMapping("/{id}") // 200 OK
+    public ResponseEntity<BookResponseDTO> getBookById(@PathVariable Long id){
+        return ResponseEntity.ok(
+                bookService.getBookById(id)
+        );
     }
 
-    @PostMapping
-    public BookResponseDTO createBook(@Valid @RequestBody BookRequestDTO request){
-        return bookService.createBook(request);
+    @PostMapping // 201 Created
+    public ResponseEntity<BookResponseDTO> createBook(@Valid @RequestBody BookRequestDTO request){
+        BookResponseDTO response = bookService.createBook(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
-    @PatchMapping("/{id}")
-    public BookResponseDTO updateBook(@PathVariable Long id, @Valid @RequestBody BookPatchDTO request){
-        return bookService.updateBook(id, request);
+    @PatchMapping("/{id}") // 200 OK
+    public ResponseEntity<BookResponseDTO> updateBook(@PathVariable Long id, @Valid @RequestBody BookPatchDTO request){
+        return ResponseEntity.ok(
+                bookService.updateBook(id, request)
+        );
     }
 
-    @DeleteMapping("/{id}")
-    public boolean deleteBook(@PathVariable Long id){
-        return bookService.deleteBook(id);
+    @DeleteMapping("/{id}") // 204 No Content
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id){
+        bookService.deleteBook(id);
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
-    @GetMapping("/search") // http://localhost:8080/books/search?title=...
-    public List<BookResponseDTO> searchBooksByTitle(@RequestParam String title){
-        return bookService.searchBooksByTitle(title);
+    @GetMapping("/search") // http://localhost:8080/books/search?title=... // 200 OK
+    public ResponseEntity<List<BookResponseDTO>> searchBooksByTitle(@RequestParam String title){
+        return ResponseEntity.ok(
+                bookService.searchBooksByTitle(title)
+        );
     }
 
-    @GetMapping("/isbn/{isbn}")
-    public BookResponseDTO searchBookByIsbn(@PathVariable String isbn){
-        return bookService.searchBookByIsbn(isbn);
+    @GetMapping("/isbn/{isbn}") // 200 OK
+    public ResponseEntity<BookResponseDTO> searchBookByIsbn(@PathVariable String isbn){
+        return ResponseEntity.ok(
+                bookService.searchBookByIsbn(isbn)
+        );
     }
 
-    @GetMapping("/available")
-    public List<BookResponseDTO> getAvailableBooks(){
-        return bookService.getAvailableBooks();
+    @GetMapping("/available") // 200 OK
+    public ResponseEntity<List<BookResponseDTO>> getAvailableBooks(){
+        return ResponseEntity.ok(
+                bookService.getAvailableBooks()
+        );
     }
 
-    @GetMapping("/unavailable")
-    public List<BookResponseDTO> getUnavailableBooks(){
-        return bookService.getUnavailableBooks();
+    @GetMapping("/unavailable") // 200 OK
+    public ResponseEntity<List<BookResponseDTO>> getUnavailableBooks(){
+        return ResponseEntity.ok(
+                bookService.getUnavailableBooks()
+        );
     }
 
-    @GetMapping("/{bookId}/borrows")
-    public List<BorrowResponseDTO> searchBorrowsByBook(@PathVariable Long bookId){
-        return bookService.searchBorrowsByBook(bookId);
+    @GetMapping("/{bookId}/borrows") // 200 OK
+    public ResponseEntity<List<BorrowResponseDTO>> searchBorrowsByBook(@PathVariable Long bookId){
+        return ResponseEntity.ok(
+                bookService.searchBorrowsByBook(bookId)
+        );
     }
 
 }

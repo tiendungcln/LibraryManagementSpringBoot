@@ -8,6 +8,8 @@ import com.library.librarymanagementspringboot.service.AuthorService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,33 +25,46 @@ public class AuthorController {
     }
 
     @GetMapping
-    public Page<AuthorResponseDTO> getAllAuthors(Pageable pageable){
-        return authorService.getAllAuthors(pageable);
+    public ResponseEntity<Page<AuthorResponseDTO>> getAllAuthors(Pageable pageable){
+        return ResponseEntity.ok(
+                authorService.getAllAuthors(pageable)
+        );
     }
 
     @GetMapping("/{id}")
-    public AuthorResponseDTO getAuthorById(@PathVariable Long id){
-        return authorService.getAuthorById(id);
+    public ResponseEntity<AuthorResponseDTO> getAuthorById(@PathVariable Long id){
+        return ResponseEntity.ok(
+                authorService.getAuthorById(id)
+        );
     }
 
     @PostMapping
-    public AuthorResponseDTO createAuthor(@Valid @RequestBody AuthorRequestDTO request){
-        return authorService.createAuthor(request);
+    public ResponseEntity<AuthorResponseDTO> createAuthor(@Valid @RequestBody AuthorRequestDTO request){
+        AuthorResponseDTO response = authorService.createAuthor(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @PatchMapping("/{id}")
-    public AuthorResponseDTO updateAuthor(@PathVariable Long id, @Valid @RequestBody AuthorPatchDTO request){
-        return authorService.updateAuthor(id, request);
+    public ResponseEntity<AuthorResponseDTO> updateAuthor(@PathVariable Long id, @Valid @RequestBody AuthorPatchDTO request){
+        return ResponseEntity.ok(
+                authorService.updateAuthor(id, request)
+        );
     }
 
     @DeleteMapping("/{id}")
-    public boolean deleteAuthor(@PathVariable Long id){
-        return authorService.deleteAuthor(id);
+    public ResponseEntity<Void> deleteAuthor(@PathVariable Long id){
+        authorService.deleteAuthor(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{authorId}/books")
-    public List<BookResponseDTO> getBooksByAuthorId(@PathVariable Long authorId){
-        return authorService.getBooksByAuthorId(authorId);
+    public ResponseEntity<List<BookResponseDTO>> getBooksByAuthorId(@PathVariable Long authorId){
+        return ResponseEntity.ok(
+                authorService.getBooksByAuthorId(authorId)
+        );
     }
 
 }

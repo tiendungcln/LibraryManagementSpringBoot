@@ -6,6 +6,7 @@ import com.library.librarymanagementspringboot.dto.MemberRequestDTO;
 import com.library.librarymanagementspringboot.dto.MemberResponseDTO;
 import com.library.librarymanagementspringboot.entity.Borrow;
 import com.library.librarymanagementspringboot.entity.Member;
+import com.library.librarymanagementspringboot.exception.ResourceNotFoundException;
 import com.library.librarymanagementspringboot.repository.BorrowRepository;
 import com.library.librarymanagementspringboot.repository.MemberRepository;
 import org.springframework.data.domain.Page;
@@ -56,11 +57,12 @@ public class MemberService {
     }
 
     public MemberResponseDTO getMemberById(Long id){
-        Member member = memberRepository.findById(id).orElse(null);
-
-        if (member == null){
-            return null;
-        }
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Member not found with id: " + id
+                        )
+                );
 
         return toResponse(member);
     }
@@ -78,15 +80,16 @@ public class MemberService {
     }
 
     public MemberResponseDTO updateMember(Long id, MemberPatchDTO request){
-        Member member = memberRepository.findById(id).orElse(null);
-
-        if (member == null){
-            return null;
-        }
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Member not found with id: " + id
+                        )
+                );
 
         if (request.getName() != null){
             if (request.getName().isBlank()){
-                return null;
+                throw new IllegalArgumentException("Name cannot be blank");
             }
 
             member.setName(request.getName());
@@ -94,7 +97,7 @@ public class MemberService {
 
         if (request.getPhone() != null){
             if (request.getPhone().isBlank()){
-                return null;
+                throw new IllegalArgumentException("Phone cannot be blank");
             }
 
             member.setPhone(request.getPhone());
@@ -102,7 +105,7 @@ public class MemberService {
 
         if (request.getAddress() != null){
             if (request.getAddress().isBlank()){
-                return null;
+                throw new IllegalArgumentException("Address cannot be blank");
             }
 
             member.setAddress(request.getAddress());
@@ -113,13 +116,14 @@ public class MemberService {
         return toResponse(savedMember);
     }
 
-    public boolean deleteMember(Long id){
+    public void deleteMember(Long id){
         if (!memberRepository.existsById(id)){
-            return false;
+            throw new ResourceNotFoundException(
+                    "Member not found with id: " + id
+            );
         }
 
         memberRepository.deleteById(id);
-        return true;
     }
 
     public List<MemberResponseDTO> searchMemberByName(String name){
@@ -130,20 +134,21 @@ public class MemberService {
     }
 
     public MemberResponseDTO searchMemberByPhone(String phone){
-        Member member = memberRepository.findByPhone(phone).orElse(null);
-
-        if (member == null){
-            return null;
-        }
+        Member member = memberRepository.findByPhone(phone)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Member not found with phone: " + phone
+                        )
+                );
 
         return toResponse(member);
     }
 
     public List<BorrowResponseDTO> searchBorrowsByMemberId(Long memberId){
-        Member member = memberRepository.findById(memberId).orElse(null);
-
-        if (member == null) {
-            return null;
+        if(!memberRepository.existsById(memberId)){
+            throw new ResourceNotFoundException(
+                    "Member not found with id: " + memberId
+            );
         }
 
         return borrowRepository.findByMemberMemberId(memberId)
@@ -153,11 +158,12 @@ public class MemberService {
     }
 
     public List<BorrowResponseDTO> searchBorrowsByPhone(String phone){
-        Member member = memberRepository.findByPhone(phone).orElse(null);
-
-        if (member == null) {
-            return null;
-        }
+        Member member = memberRepository.findByPhone(phone)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Member not found with phone: " + phone
+                        )
+                );
 
         return borrowRepository.findByMemberPhone(phone)
                 .stream()

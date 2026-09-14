@@ -6,6 +6,7 @@ import com.library.librarymanagementspringboot.dto.AuthorResponseDTO;
 import com.library.librarymanagementspringboot.dto.BookResponseDTO;
 import com.library.librarymanagementspringboot.entity.Author;
 import com.library.librarymanagementspringboot.entity.Book;
+import com.library.librarymanagementspringboot.exception.ResourceNotFoundException;
 import com.library.librarymanagementspringboot.repository.AuthorRepository;
 import com.library.librarymanagementspringboot.repository.BookRepository;
 
@@ -59,11 +60,12 @@ public class AuthorService {
     }
 
     public AuthorResponseDTO getAuthorById(Long id){
-        Author author = authorRepository.findById(id).orElse(null);
-
-        if (author == null){
-            return null;
-        }
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Author not found with id: " + id
+                        )
+                );
 
         return toResponse(author);
     }
@@ -81,15 +83,16 @@ public class AuthorService {
     }
 
     public AuthorResponseDTO updateAuthor(Long id, AuthorPatchDTO request){
-        Author author = authorRepository.findById(id).orElse(null);
-
-        if (author == null){
-            return null;
-        }
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Author not found with id: " + id
+                        )
+                );
 
         if (request.getName() != null){
             if (request.getName().isBlank()){
-                return null;
+                throw new IllegalArgumentException("Name cannot be blank");
             }
 
             author.setName(request.getName());
@@ -97,7 +100,7 @@ public class AuthorService {
 
         if (request.getCountry() != null){
             if (request.getCountry().isBlank()){
-                return null;
+                throw new IllegalArgumentException("Country cannot be blank");
             }
 
             author.setCountry(request.getCountry());
@@ -113,20 +116,21 @@ public class AuthorService {
 
     }
 
-    public boolean deleteAuthor(Long id){
+    public void deleteAuthor(Long id){
         if (!authorRepository.existsById(id)){
-            return false;
+            throw new ResourceNotFoundException(
+                    "Author not found with id: " + id
+            );
         }
 
         authorRepository.deleteById(id);
-        return true;
     }
 
     public List<BookResponseDTO> getBooksByAuthorId(Long authorId){
-        Author author = authorRepository.findById(authorId).orElse(null);
-
-        if (author == null){
-            return null;
+        if (!authorRepository.existsById(authorId)){
+            throw new ResourceNotFoundException(
+                    "Author not found with id: " + authorId
+            );
         }
 
         return bookRepository.findByAuthorAuthorId(authorId)

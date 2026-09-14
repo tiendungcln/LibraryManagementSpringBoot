@@ -7,6 +7,7 @@ import com.library.librarymanagementspringboot.dto.BorrowResponseDTO;
 import com.library.librarymanagementspringboot.entity.Author;
 import com.library.librarymanagementspringboot.entity.Book;
 import com.library.librarymanagementspringboot.entity.Borrow;
+import com.library.librarymanagementspringboot.exception.ResourceNotFoundException;
 import com.library.librarymanagementspringboot.repository.AuthorRepository;
 import com.library.librarymanagementspringboot.repository.BookRepository;
 import com.library.librarymanagementspringboot.repository.BorrowRepository;
@@ -64,11 +65,12 @@ public class BookService {
     }
 
     public BookResponseDTO getBookById(Long id){
-        Book book = bookRepository.findById(id).orElse(null);
-
-        if (book == null){
-            return null;
-        }
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Book not found with id: " + id
+                        )
+                );
 
         return toResponse(book);
     }
@@ -79,11 +81,12 @@ public class BookService {
 
         book.setTitle(request.getTitle());
 
-        Author author = authorRepository.findById(request.getAuthorId()).orElse(null);
-
-        if (author == null){
-            return null;
-        }
+        Author author = authorRepository.findById(request.getAuthorId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Author not found with id: " + request.getAuthorId()
+                        )
+                );
 
         book.setAuthor(author);
 
@@ -99,33 +102,35 @@ public class BookService {
     }
 
     public BookResponseDTO updateBook(Long id, BookPatchDTO request){
-        Book book = bookRepository.findById(id).orElse(null);
-
-        if (book == null){
-            return null;
-        }
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Book not found with id: " + id
+                        )
+                );
 
         if (request.getTitle() != null){
             if (request.getTitle().isBlank()){
-                return null;
+                throw new IllegalArgumentException("Title cannot be blank");
             }
 
             book.setTitle(request.getTitle());
         }
 
         if (request.getAuthorId() != null){
-            Author author = authorRepository.findById(request.getAuthorId()).orElse(null);
-
-            if (author == null){
-                return null;
-            }
+            Author author = authorRepository.findById(request.getAuthorId())
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Author not found with id: " + request.getAuthorId()
+                            )
+                    );
 
             book.setAuthor(author);
         }
 
         if (request.getPublisher() != null){
             if (request.getPublisher().isBlank()){
-                return null;
+                throw new IllegalArgumentException("Publisher cannot be blank");
             }
 
             book.setPublisher(request.getPublisher());
@@ -141,7 +146,7 @@ public class BookService {
 
         if (request.getIsbn() != null){
             if (request.getIsbn().isBlank()){
-                return null;
+                throw new IllegalArgumentException("ISBN cannot be blank");
             }
 
             book.setIsbn(request.getIsbn());
@@ -156,13 +161,14 @@ public class BookService {
         return toResponse(savedBook);
     }
 
-    public boolean deleteBook(Long id){
+    public void deleteBook(Long id){
         if (!bookRepository.existsById(id)){
-            return false;
+            throw new ResourceNotFoundException(
+                    "Book not found with id: " + id
+            );
         }
 
         bookRepository.deleteById(id);
-        return true;
     }
 
     public List<BookResponseDTO> searchBooksByTitle(String title){
@@ -173,11 +179,12 @@ public class BookService {
     }
 
     public BookResponseDTO searchBookByIsbn(String isbn){
-        Book book = bookRepository.findByIsbn(isbn).orElse(null);
-
-        if (book == null){
-            return null;
-        }
+        Book book = bookRepository.findByIsbn(isbn)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Book not found with ISBN: " + isbn
+                        )
+                );
 
         return toResponse(book);
     }
@@ -197,10 +204,10 @@ public class BookService {
     }
 
     public List<BorrowResponseDTO> searchBorrowsByBook(Long bookId){
-        Book book = bookRepository.findById(bookId).orElse(null);
-
-        if (book == null){
-            return null;
+        if (!bookRepository.existsById(bookId)) {
+            throw new ResourceNotFoundException(
+                    "Book not found with id: " + bookId
+            );
         }
 
         return borrowRepository.findByBookBookId(bookId)

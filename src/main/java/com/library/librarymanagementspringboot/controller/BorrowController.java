@@ -6,6 +6,8 @@ import com.library.librarymanagementspringboot.service.BorrowService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,28 +21,39 @@ public class BorrowController {
     }
 
     @GetMapping
-    public Page<BorrowResponseDTO> getAllBorrows(Pageable pageable){
-        return borrowService.getAllBorrows(pageable);
+    public ResponseEntity<Page<BorrowResponseDTO>> getAllBorrows(Pageable pageable){
+        return ResponseEntity.ok(
+                borrowService.getAllBorrows(pageable)
+        );
     }
 
     @GetMapping("/{id}")
-    public BorrowResponseDTO getBorrowById(@PathVariable Long id){
-        return borrowService.getBorrowById(id);
+    public ResponseEntity<BorrowResponseDTO> getBorrowById(@PathVariable Long id){
+        return ResponseEntity.ok(
+                borrowService.getBorrowById(id)
+        );
     }
 
     @PostMapping
-    public BorrowResponseDTO createBorrow(@Valid @RequestBody BorrowRequestDTO request){
-        return borrowService.borrowBook(request);
+    public ResponseEntity<BorrowResponseDTO> createBorrow(@Valid @RequestBody BorrowRequestDTO request){
+        BorrowResponseDTO response = borrowService.borrowBook(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @DeleteMapping("/{id}")
-    public boolean deleteBorrow(@PathVariable Long id){
-        return borrowService.deleteBorrow(id);
+    public ResponseEntity<Void> deleteBorrow(@PathVariable Long id){
+        borrowService.deleteBorrow(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/return")
-    public BorrowResponseDTO returnBook(@PathVariable Long id) {
-        return borrowService.returnBook(id);
+    public ResponseEntity<BorrowResponseDTO> returnBook(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                borrowService.returnBook(id)
+        );
     }
 
 }

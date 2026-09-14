@@ -8,6 +8,8 @@ import com.library.librarymanagementspringboot.service.MemberService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,48 +25,67 @@ public class MemberController {
     }
 
     @GetMapping
-    public Page<MemberResponseDTO> getAllMembers(Pageable pageable){
-        return memberService.getAllMembers(pageable);
+    public ResponseEntity<Page<MemberResponseDTO>> getAllMembers(Pageable pageable){
+        return ResponseEntity.ok(
+                memberService.getAllMembers(pageable)
+        );
     }
 
     @GetMapping("/{id}")
-    public MemberResponseDTO getMemberById(@PathVariable Long id){
-        return memberService.getMemberById(id);
+    public ResponseEntity<MemberResponseDTO> getMemberById(@PathVariable Long id){
+        return ResponseEntity.ok(
+                memberService.getMemberById(id)
+        );
     }
 
     @PostMapping
-    public MemberResponseDTO createMember(@Valid @RequestBody MemberRequestDTO request){
-        return memberService.createMember(request);
+    public ResponseEntity<MemberResponseDTO> createMember(@Valid @RequestBody MemberRequestDTO request){
+        MemberResponseDTO response = memberService.createMember(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @PatchMapping("/{id}")
-    public MemberResponseDTO updateMember(@PathVariable Long id, @Valid @RequestBody MemberPatchDTO request){
-        return memberService.updateMember(id, request);
+    public ResponseEntity<MemberResponseDTO> updateMember(@PathVariable Long id, @Valid @RequestBody MemberPatchDTO request){
+        return ResponseEntity.ok(
+                memberService.updateMember(id, request)
+        );
     }
 
     @DeleteMapping("/{id}")
-    public boolean deleteMember(@PathVariable Long id){
-        return memberService.deleteMember(id);
+    public ResponseEntity<Void> deleteMember(@PathVariable Long id){
+        memberService.deleteMember(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/search") // http://localhost:8080/members/search?name=...
-    public List<MemberResponseDTO> searchMemberByName(@RequestParam String name){
-        return memberService.searchMemberByName(name);
+    public ResponseEntity<List<MemberResponseDTO>> searchMemberByName(@RequestParam String name){
+        return ResponseEntity.ok(
+                memberService.searchMemberByName(name)
+        );
     }
 
     @GetMapping("/phone/{phone}")
-    public MemberResponseDTO searchMemberByPhone(@PathVariable String phone){
-        return memberService.searchMemberByPhone(phone);
+    public ResponseEntity<MemberResponseDTO> searchMemberByPhone(@PathVariable String phone){
+        return ResponseEntity.ok(
+                memberService.searchMemberByPhone(phone)
+        );
     }
 
     @GetMapping("/{memberId}/borrows")
-    public List<BorrowResponseDTO> searchBorrowsByMemberId(@PathVariable Long memberId){
-        return memberService.searchBorrowsByMemberId(memberId);
+    public ResponseEntity<List<BorrowResponseDTO>> searchBorrowsByMemberId(@PathVariable Long memberId){
+        return ResponseEntity.ok(
+                memberService.searchBorrowsByMemberId(memberId)
+        );
     }
 
     @GetMapping("/phone/{phone}/borrows")
-    public List<BorrowResponseDTO> searchBorrowsByPhone(@PathVariable String phone){
-        return memberService.searchBorrowsByPhone(phone);
+    public ResponseEntity<List<BorrowResponseDTO>> searchBorrowsByPhone(@PathVariable String phone){
+        return ResponseEntity.ok(
+                memberService.searchBorrowsByPhone(phone)
+        );
     }
 
 }
